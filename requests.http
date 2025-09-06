@@ -1,0 +1,24 @@
+### Add
+post http://localhost:3000/course
+Content-Type: application/json
+
+{
+    "title": "xxx"
+}
+
+### List All
+get http://localhost:3000/course
+
+### Get one
+get http://localhost:3000/course/1
+
+### Update
+put http://localhost:3000/course/1
+Content-Type: application/json
+
+{
+    "title": "Microservicios con NestJS Advanced"
+}
+
+### Delete
+delete http://localhost:3000/course/1
