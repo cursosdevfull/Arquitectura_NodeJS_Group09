@@ -1,9 +1,9 @@
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber } from "class-validator";
 
-export class CourseIdDto {
+export class TeacherIdDto {
     @IsNotEmpty()
     @IsNumber()
     @Type(() => Number)
-    courseId: number;
-};
+    teacherId: number;
+}

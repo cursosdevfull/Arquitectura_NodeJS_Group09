@@ -1,0 +1,30 @@
+### Create a new session
+POST http://localhost:3000/session
+Content-Type: application/json
+
+{
+    "zoomSessionId": "ffd31185-ad1d-4d31-8ed5-d2a75d1e0f4f",
+    "dateMetting": "2025-09-20",
+    "timeStart": "18:00:00",
+    "duration": 90,
+    "schedule": {
+        "scheduleId": 1
+    }
+}
+
+### Get all sessions by scheduleId (required parameter)
+GET http://localhost:3000/session?scheduleId=1
+
+### Get a single session
+GET http://localhost:3000/session/3
+
+### Update a session
+PUT http://localhost:3000/session/3
+Content-Type: application/json
+
+{
+    "duration": 120
+}
+
+### Delete a session
+DELETE http://localhost:3000/session/3

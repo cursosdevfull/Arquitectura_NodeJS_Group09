@@ -1,0 +1,21 @@
+###
+post http://localhost:3000/course
+Content-Type: application/json
+
+{
+   "title": "NodeJS Avanzado"
+}
+
+###
+get http://localhost:3000/course
+
+### Eliminar
+delete http://localhost:3000/course/6
+
+### Actualizar
+put http://localhost:3000/course/7
+Content-Type: application/json
+
+{
+   "title": "Updated Course 4"
+}

@@ -1,10 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post, Put, Req, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, Inject, NotFoundException, Param, Post, Put } from "@nestjs/common";
 import { IsNull, Repository } from "typeorm";
 import { CourseEntity } from "./models/course.entity";
 import { CourseCreateDto } from "./dtos/course-create.dto";
-import { type CourseIdDto } from "./dtos/course-id.dto";
-import { type CourseUpdateDto } from "./dtos/course-update.dto";
-import { validate } from "class-validator";
+import { CourseIdDto } from "./dtos/course-id.dto";
+import { CourseUpdateDto } from "./dtos/course-update.dto";
 
 @Controller("course")
 export class CourseController {
@@ -12,16 +11,6 @@ export class CourseController {
 
     @Post()
     async add(@Body() body: CourseCreateDto) {
-
-        /*         if (!body.title) {
-                    throw new Error("Title is required");
-                }
-        
-                if (body.title.length < 5) {
-                    throw new Error("Title must be at least 5 characters long");
-                } */
-
-
         const course = new CourseEntity();
         course.title = body.title;
 
@@ -43,31 +32,44 @@ export class CourseController {
         return course;
     }
 
-    @Put(":id")
+    @Put(":courseId")
     async update(@Param() params: CourseIdDto, @Body() body: CourseUpdateDto) {
-        const { id } = params
-        const course = await this.repository.findOne({ where: { courseId: +id, deletedAt: IsNull() } });
+        try {
+            const { courseId } = params
 
-        if (!course) {
-            throw new NotFoundException();
+            const course = await this.repository.findOne({ where: { courseId: +courseId, deletedAt: IsNull() } });
+
+            if (!course) {
+                throw new NotFoundException();
+            }
+
+            Object.assign(course, body)
+
+            course.updatedAt = new Date();
+
+            return this.repository.save(course);
+        } catch (error) {
+            const status = error instanceof HttpException ? error.getStatus() : 500
+            throw new HttpException("Error updating course", status, { cause: error });
         }
-
-        Object.assign(course, body)
-
-        return this.repository.save(course);
     }
 
-    @Delete(":id")
+    @Delete(":courseId")
     async delete(@Param() params: CourseIdDto) {
-        const { id } = params
-        const course = await this.repository.findOne({ where: { courseId: +id, deletedAt: IsNull() } });
+        try {
+            const { courseId } = params
+            const course = await this.repository.findOne({ where: { courseId: +courseId, deletedAt: IsNull() } });
 
-        if (!course) {
-            throw new NotFoundException();
+            if (!course) {
+                throw new NotFoundException();
+            }
+
+            course.deletedAt = new Date();
+
+            return this.repository.save(course);
+        } catch (error) {
+            const status = error instanceof HttpException ? error.getStatus() : 500
+            throw new HttpException("Error deleting course", status, { cause: error });
         }
-
-        course.deletedAt = new Date();
-
-        return this.repository.save(course);
     }
 }

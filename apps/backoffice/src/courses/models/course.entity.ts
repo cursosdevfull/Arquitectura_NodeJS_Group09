@@ -1,19 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ScheduleEntity } from '../../schedules/models/schedule.entity';
+import { BaseEntity } from '../../core/entities/base';
 
 @Entity({ name: "course" })
-export class CourseEntity {
+//@Index("IDX_COURSE_TITLE", ["title", "courseId"], { unique: true })
+export class CourseEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     courseId: number;
 
     @Column({ type: "varchar", length: 100 })
     title: string;
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    createdAt: Date;
-
-    @Column({ type: "timestamp", nullable: true })
-    updatedAt: Date
-
-    @Column({ type: "timestamp", nullable: true })
-    deletedAt: Date;
+    @OneToMany(() => ScheduleEntity, schedule => schedule.course)
+    schedules: ScheduleEntity[];
 }
