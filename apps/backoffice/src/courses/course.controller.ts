@@ -4,72 +4,34 @@ import { CourseEntity } from "./models/course.entity";
 import { CourseCreateDto } from "./dtos/course-create.dto";
 import { CourseIdDto } from "./dtos/course-id.dto";
 import { CourseUpdateDto } from "./dtos/course-update.dto";
+import { CourseService } from "./course.service";
 
 @Controller("course")
 export class CourseController {
-    constructor(@Inject("COURSE_REPOSITORY") private repository: Repository<CourseEntity>) { }
+    constructor(@Inject("COURSE_REPOSITORY") private repository: Repository<CourseEntity>, private courseService: CourseService) { }
 
     @Post()
     async add(@Body() body: CourseCreateDto) {
-        const course = new CourseEntity();
-        course.title = body.title;
-
-        return this.repository.save(course);
+        return this.courseService.save(body.title)
     }
 
     @Get()
     listAll(): Promise<CourseEntity[]> {
-        return this.repository.find({ where: { deletedAt: IsNull() } });
+        return this.courseService.listAll();
     }
 
     @Get(":id")
-    async getOne(@Param() params: any): Promise<CourseEntity> {
-        console.log(params);
-        const course = await this.repository.findOne({ where: { courseId: +params.id, deletedAt: IsNull() } });
-        if (!course) {
-            throw new NotFoundException();
-        }
-        return course;
+    async getOne(@Param() params: CourseIdDto): Promise<CourseEntity> {
+        return this.courseService.getOne(params.courseId);
     }
 
     @Put(":courseId")
     async update(@Param() params: CourseIdDto, @Body() body: CourseUpdateDto) {
-        try {
-            const { courseId } = params
-
-            const course = await this.repository.findOne({ where: { courseId: +courseId, deletedAt: IsNull() } });
-
-            if (!course) {
-                throw new NotFoundException();
-            }
-
-            Object.assign(course, body)
-
-            course.updatedAt = new Date();
-
-            return this.repository.save(course);
-        } catch (error) {
-            const status = error instanceof HttpException ? error.getStatus() : 500
-            throw new HttpException("Error updating course", status, { cause: error });
-        }
+        return this.courseService.update(params.courseId, body);
     }
 
     @Delete(":courseId")
     async delete(@Param() params: CourseIdDto) {
-        try {
-            const { courseId } = params
-            const course = await this.repository.findOne({ where: { courseId: +courseId, deletedAt: IsNull() } });
-
-            if (!course) {
-                throw new NotFoundException();
-            }
-
-            course.deletedAt = new Date();
-
-            return this.repository.save(course);
-        } catch (error) {
-            const status = error instanceof HttpException ? error.getStatus() : 500
-            throw new HttpException("Error deleting course", status, { cause: error });
-        }
+        return this.courseService.delete(params.courseId);
     }
 }
