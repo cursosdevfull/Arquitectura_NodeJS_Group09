@@ -1,9 +1,10 @@
 import { HttpException, Inject, NotFoundException } from "@nestjs/common";
 import { IsNull, Repository } from "typeorm";
-import { CourseEntity } from "./models/course.entity";
-import { CourseUpdateDto } from "./dtos/course-update.dto";
+import { CourseEntity } from "../models/course.entity";
+import { CourseUpdateDto } from "../dtos/course-update.dto";
+import { CoursePort } from "../ports/course.port";
 
-export class CourseService {
+export class CourseService implements CoursePort {
     constructor(@Inject("COURSE_REPOSITORY") private repository: Repository<CourseEntity>) { }
 
     save(title: string) {

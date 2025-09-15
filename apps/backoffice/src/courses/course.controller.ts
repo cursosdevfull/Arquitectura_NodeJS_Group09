@@ -4,7 +4,7 @@ import { CourseEntity } from "./models/course.entity";
 import { CourseCreateDto } from "./dtos/course-create.dto";
 import { CourseIdDto } from "./dtos/course-id.dto";
 import { CourseUpdateDto } from "./dtos/course-update.dto";
-import { CourseService } from "./course.service";
+import { CourseService } from "./adapters/course.service";
 
 @Controller("course")
 export class CourseController {

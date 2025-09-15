@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { CourseEntity } from "./models/course.entity";
-import { CourseService } from "./course.service";
+import { CourseService } from "./adapters/course.service";
 
 export const courseProviders = [
     {
